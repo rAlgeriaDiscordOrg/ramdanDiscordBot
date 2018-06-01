@@ -1,0 +1,20 @@
+show hijri date and time
+
+a function for time by city
+
+a function for time by long/lat
+
+a function to show all available calculation methods
+
+a function to show available cities   or a link to it
+
+
+our function that do queing and time calculation for  all user the whole day
+
+our function whith it's counter, that go and loop through the queue, with settimout, and it exec  the callback that handle user showing message
+
+
+function to show message to users 
+
+
+

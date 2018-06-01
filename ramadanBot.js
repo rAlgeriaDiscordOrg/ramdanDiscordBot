@@ -476,6 +476,14 @@ let Ramadan = function (options) ***REMOVED***
   ***REMOVED***
 
 
+
+
+    // here go the logic for the time prayer functionality
+
+    function nextPrayerAnouncement()
+
+
+
     this.init();
 }
 
