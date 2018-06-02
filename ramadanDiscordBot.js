@@ -16,9 +16,9 @@ client.on('message', msg => ***REMOVED***
         let command = args.shift().toLowerCase();
 
         if(command === '') ***REMOVED***
-            
+
       ***REMOVED***
   ***REMOVED***
 });
 
-client.login('token');
+client.login(config.token);
