@@ -1,20 +1,48 @@
 show hijri date and time
 
-a function for time by city
+a function for time by city  (done)
 
-a function for time by long/lat
+a function for time by long/lat  (done)
 
 a function to show all available calculation methods
 
 a function to show available cities   or a link to it
 
 
-our function that do queing and time calculation for  all user the whole day
 
-our function whith it's counter, that go and loop through the queue, with settimout, and it exec  the callback that handle user showing message
+
+a function to parse the config command
+
+
+function to register a user
+
+
+
+our function that do queing and time calculation for  all registered user the whole day and using scheduler it launch.
+
+
 
 
 function to show message to users 
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+No more necessary
+
+our function whith it's counter, that go and loop through the queue, with settimout, and it exec  the callback that handle user showing message

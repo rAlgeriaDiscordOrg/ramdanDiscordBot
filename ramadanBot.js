@@ -1,3 +1,5 @@
+const date = require('date-and-time')
+
 let Ramadan = function (options) ***REMOVED***
     let that = this;
 
@@ -478,14 +480,44 @@ let Ramadan = function (options) ***REMOVED***
 
 
 
-    // here go the logic for the time prayer functionality
+    // here go the logic for the time prayer functionality  
 
-    function nextPrayerAnouncement()
+    times
+
+    function calculatePrayerTimesAndQueing () ***REMOVED***
+        for(let i = 0; i < .length; i++)***REMOVED***
+            
+      ***REMOVED***
+  ***REMOVED***
+
+
+    let queue = [];
+
+    /**
+     queue = [***REMOVED***
+        time: ,
+        usersIds: [***REMOVED***}, ***REMOVED***}, ***REMOVED***}]   
+   ***REMOVED***] 
+     */
+    function nextPrayerAnouncement(queueIndex, userMessagesHandler) ***REMOVED***
+        let currentDate;
+        if(queueIndex === 0) ***REMOVED***
+            currentDate = new Date();
+      ***REMOVED*** else  ***REMOVED***
+            currentDate = queue;
+      ***REMOVED***
+  ***REMOVED***
+
+
+
+
+
 
 
 
     this.init();
 }
+
 
 
 /**
