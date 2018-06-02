@@ -15,8 +15,10 @@ client.on('message', msg => ***REMOVED***
         let args = msg.content.slice(config.prefix.length);
         let command = args.shift().toLowerCase();
 
-        if(command === '') ***REMOVED***
+        if(command === 'prayer') ***REMOVED***
+            [register, Country, city] = args;
 
+            // here go what to do (and check to for the one that wasn't provided (undefined))
       ***REMOVED***
   ***REMOVED***
 });
