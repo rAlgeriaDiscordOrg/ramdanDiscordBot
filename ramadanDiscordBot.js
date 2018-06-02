@@ -15,10 +15,30 @@ client.on('message', msg => ***REMOVED***
         let args = msg.content.slice(config.prefix.length);
         let command = args.shift().toLowerCase();
 
-        if(command === 'prayer') ***REMOVED***
-            [register, Country, city] = args;
+        switch(command)***REMOVED***
+            case 'prayer': 
+                switch (args[0])***REMOVED***
+                    case 'register':
+                        [country, city] = args.slice(1);
+                        
+                        // work with them and check if were provided (undefined)
 
-            // here go what to do (and check to for the one that wasn't provided (undefined))
+                        if(country) ***REMOVED***
+
+                      ***REMOVED***
+
+                        if(city) ***REMOVED***
+
+                      ***REMOVED***
+
+                        break;
+
+                    case 'unsubscrib':
+                        
+                        break;
+                    default: 
+                        //print command wrong!
+              ***REMOVED***
       ***REMOVED***
   ***REMOVED***
 });
