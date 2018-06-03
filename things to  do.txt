@@ -20,15 +20,30 @@ function to register a user (not finished)
 ##################"""""
 
 ################
-scheduller class
-
+prayerTimeScheduller class
+==> init ..etc  (case crash to launch again)
+==> calculate all users time and schedul
 #############
+Notice: work with UTC time. (do convertion) 
+
+scheduller may need thoughts
+========================
+==============================
+we will have two scheduller, one for prayer time computation, the other for prayer time reminding
+
+a devision of city by region (why: to have the prayerTimeComputation Scheduller  schedul different update time, for different region and that because, we are today here now, but it may be tomorrow there.  Check zones and time difference (i don't know if that necessary))
+
+
 
 
 =========
-function to show message to users 
+function to send message to users  (private)
 =========
 
+
+Later in configuration 
+============================
+reminder timeout before prayer time
 
 
 
