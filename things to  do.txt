@@ -11,20 +11,23 @@ a function to show available cities   or a link to it
 
 
 
-a function to parse the config command
+
+###################"""""
+function to register a user (not finished)
+==> add to city collection
+==> check if new city
+==> add to the scheduller if it's a new city
+##################"""""
+
+################
+scheduller class
+
+#############
 
 
-function to register a user
-
-
-
-our function that do queing and time calculation for  all registered user the whole day and using scheduler it launch.
-
-
-
-
+=========
 function to show message to users 
-
+=========
 
 
 
