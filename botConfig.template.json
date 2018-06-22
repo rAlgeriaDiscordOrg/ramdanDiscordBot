@@ -1,0 +1,6 @@
+{
+    "token": "Here your bot discord token",
+    "prefix": "!",
+    "ownerID": "your-user-ID", 
+    "firestoreDB": "firestore database"
+  }
