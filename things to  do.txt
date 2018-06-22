@@ -11,6 +11,9 @@ a function to show available cities   or a link to it
 
 
 
+get hijri date
+
+
 
 ###################"""""
 function to register a user (not finished)

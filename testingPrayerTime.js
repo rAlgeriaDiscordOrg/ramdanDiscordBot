@@ -1,7 +1,7 @@
 const PrayerTime = require('./prayerTimeWrapper');
 const date = require('date-and-time');
 
-let pt = new PrayerTime(***REMOVED***
+let pt = new PrayerTime({
     date_or_timestamp: date.format(new Date(), 'DD-MM-YYYY'),
     city: 'Algiers',
     country: 'Algeria',
@@ -19,9 +19,9 @@ let pt = new PrayerTime(***REMOVED***
 
 
 
-pt.getTimingByCity().then(function(response) ***REMOVED***
+pt.getTimingByCity().then(function(response) {
     console.log('body = ' + JSON.stringify(response.body));
-}).catch(function (err) ***REMOVED***
+}).catch(function (err) {
     console.log('err = ' + err);
 });
 
