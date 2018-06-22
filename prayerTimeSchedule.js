@@ -57,7 +57,7 @@ class PrayerTimeScheduler {
         return false;
     }
 
-    getCitiesAndSchedule() {
+    getCitiesAndSchedule(remindersDistances) {
         // get cities from database
         let self = this;
         console.log("getting cities");
@@ -86,13 +86,15 @@ class PrayerTimeScheduler {
 
                     let timings = o.body.data.timings;
 
-                    let haveSchedule = self.oneCitySchedule(country, city, timings, dateFormated, timeZone);
+
+                    // [to see] NOTE: we are providing remindersDistances, at discordBot level for testing (same for all users), we will change that to by users (we have to make more enchancement to user registration process (so it include those info, and in  case not provided, we fallback to a default.))
+                    let haveSchedule = self.oneCitySchedule(country, city, timings, dateFormated, timeZone, remindersDistances);
 
                     // check if any schedule was set! if not do it with the next day 
                     if (!haveSchedule) {
                         console.log(" ======= current day is passed! Scheduling the next day !!!!!!!!!!!");
-                        
-                        self.oneCityScheduleNextDay(country, city, dateFormated, timeZone);
+
+                        self.oneCityScheduleNextDay(country, city, dateFormated, timeZone, remindersDistances);
                     }
 
                 }).catch(function (err) {
@@ -108,7 +110,16 @@ class PrayerTimeScheduler {
         });
     }
 
-    oneCitySchedule(country, city, timings, dateFormated, timeZone) {
+    /**
+     * 
+     * @param {*} country 
+     * @param {*} city 
+     * @param {*} timings 
+     * @param {*} dateFormated 
+     * @param {*} timeZone 
+     * @param {it's the distance of te reminder time from the prayer time, this var is an array of reminders distance object {distance:, unit:}} remindersDistances 
+     */
+    oneCitySchedule(country, city, timings, dateFormated, timeZone, remindersDistances) {
         let self = this;
         console.log("city !!!!!!! = " + city);
         let schedulePlanned = false;
@@ -128,9 +139,9 @@ class PrayerTimeScheduler {
                 // console.log('date iso = ' + dateFormated);
                 // console.log('time = ' + time);
 
-                let jobTime_ = `${dateFormated} ${time}`;
-                // console.log('jobTime = ' + jobTime_);
-                let jobTime = moment.tz(jobTime_, timeZone);
+                let prayerTime_ = `${dateFormated} ${time}`;
+                // console.log('jobTime = ' + prayerTime_);
+                let prayerTime = moment.tz(prayerTime_, timeZone);
 
 
 
@@ -138,58 +149,83 @@ class PrayerTimeScheduler {
 
                 let currentTime = new Date();
 
-                if (jobTime.toDate() - currentTime > 0) {
+                if (prayerTime.toDate() - currentTime > 0) {
                     console.log('yea we get a time');
-                    console.log(jobTime.format());
+                    console.log(prayerTime.format());
+                    if (!remindersDistances) {
+                        remindersDistances = [{
+                            distance: 10,
+                            unit: "m"
+                        }];
+                    }
 
-                    jobTime.subtract(self.remindTimeRange.time, self.remindTimeRange.unit);
+                    // setting schedules following the reminders list
+                    for (let i = 0; i < remindersDistances.length; i++) {
+                        console.log('Reminder (distance)');
+                        let rd = remindersDistances[i];
+                        console.dir(rd);
 
-                    let jobTimeDate = jobTime.toDate();
-                    if (jobTimeDate - currentTime > 0) {
-                        console.log("cool reminder nice");
+                        let jobTime = prayerTime.clone();
+                        jobTime.subtract(rd.distance, rd.unit);
 
-                        console.log('reminder time = ' + jobTime.format());
+                        let jobTimeDate = jobTime.toDate();
+                        if (jobTimeDate - currentTime > 0) {
+                            console.log("cool reminder nice");
 
-                        // use jobtime date to create the scheduler
+                            console.log('reminder time = ' + jobTime.format());
 
-                        let schedulePos = self.reminderSchedulers.length;
+                            // use jobtime date to create the scheduler
 
-                        self.reminderSchedulers.push(
-                            schedule.scheduleJob(jobTimeDate, function () {
-                                // here go the closures
-                                // let city = city;
-                                // let country = country;
-                                //
-                                console.log('The world is going to be better today.');
-                                console.log('reminder trigered at ' + (new Date()).toString());
-                                console.log('due to schedule at : ' + jobTime.format());
+                            let schedulePos = self.reminderSchedulers.length;
 
-                                // here go the send to user
-                                console.log("city = " + city);
-                                console.log("country = " + country);
-                                self.alertCityUsers(country, city, timeName).catch(function (err) {
-                                    console.error(err);
-                                });
+                            self.reminderSchedulers.push(
+                                schedule.scheduleJob(jobTimeDate, function () {
+                                    // here go the closures
+                                    // let city = city;
+                                    // let country = country;
+                                    //
+                                    console.log('The world is going to be better today.');
+                                    console.log('reminder trigered at ' + (new Date()).toString());
+                                    console.log('due to schedule at : ' + jobTime.format());
 
-                                if (timeName === 'Isha') {
-                                    self.oneCityScheduleNextDay(country, city, dateFormated, timeZone);
-                                }
-                                // remove the scheduler obj from the list
-                                self.removeSchedule(schedulePos);
-                            })
-                        );
-                        schedulePlanned = true;
-                        console.log('Schedule was set');
-                    } else {
-                        // treat the case where the salat time isn't reached yet but we passed the remind time
+                                    // here go the send to user
+                                    console.log("city = " + city);
+                                    console.log("country = " + country);
+                                    self.alertCityUsers(country, city, timeName, rd).catch(function (err) {
+                                        console.error(err);
+                                    });
 
-                        // send the messages right away.
+                                    if (timeName === 'Isha') {
+                                        self.oneCityScheduleNextDay(country, city, dateFormated, timeZone, remindersDistances);
+                                    }
+                                    // remove the scheduler obj from the list
+                                    self.removeSchedule(schedulePos);
+                                })
+                            );
+                            schedulePlanned = true;
+                            console.log('Schedule was set');
+                        } else {
+                            // treat the case where the salat time isn't reached yet but we passed the remind time
+
+                            // send the messages right away.
+
+                            // here it make sense to alert people 
+                            console.log('----------------- ' + timeName + ' passed reminders time but still not arrived yet! ------------');
+                            console.log("country = " + country);
+                            console.log("city = " + city);
+                            self.alertCityUsers(country, city, timeName, rd).catch(function (err) {
+                                console.error(err);
+                            });
+                        }
+
                     }
                 } else {
                     // treat here the case when the current time have passed the prayer time 
 
                     // one of the thing is to send messages rigth away
                     console.log('----------------- ' + timeName + ' passed ! ------------');
+
+                    // or just do nothing (that's too logical, because generaly it will be ok, at init, only one crashes happen, a prayer can be missed and it's ok!!! that's it ) (stay you may like to site the passed prayer !!! whatever)
                 }
             }
         }
@@ -197,7 +233,7 @@ class PrayerTimeScheduler {
         return schedulePlanned;
     }
 
-    oneCityScheduleNextDay(country, city, dateFormated, timeZone) {
+    oneCityScheduleNextDay(country, city, dateFormated, timeZone, remindersDistances) {
         let self = this;
         let nextDay = moment.tz(dateFormated, timeZone).add(1, 'day');
 
@@ -209,9 +245,9 @@ class PrayerTimeScheduler {
         self.ptw.getTimingByCity().then(function (o) {
             let timings = o.body.data.timings;
 
-            self.oneCitySchedule(country, city, timings, nextDayFormated, timeZone);
+            self.oneCitySchedule(country, city, timings, nextDayFormated, timeZone, remindersDistances);
         }).catch(function (err) {
-            console.error(err);  
+            console.error(err);
         });
     }
 
@@ -219,7 +255,8 @@ class PrayerTimeScheduler {
         this.reminderSchedulers.splice(pos, 1);
     }
 
-    alertCityUsers(country, city, prayerTime) {
+    // [to see] NOte: when you get reminders from users, you can check if it's in or not (the best is to have a 3, or 4 or predefined, bot config, set of values, and users choose just one of them, then in all cities you schedule such a thing, and send to just the one that have that, the other choice, is to save such an info at registration time, and handle that too at remove time, so it's always effective)
+    alertCityUsers(country, city, prayerTime, reminderDistance) {
         let self = this;
         return new Promise(function (resolve, reject) {
             console.log('get users from db');
@@ -230,7 +267,7 @@ class PrayerTimeScheduler {
                     let user = self.dc.users.get(d.id);
                     console.log('user (' + d.id + ',' + d.username + ') ===>');
                     console.dir(user);
-                    self.alertUser(user, country, city, prayerTime);
+                    self.alertUser(user, country, city, prayerTime, reminderDistance);
                 });
                 console.log('finish');
                 resolve(snapshot);
@@ -241,8 +278,8 @@ class PrayerTimeScheduler {
         });
     }
 
-    alertUser(user, country, city, prayerTime) {
-        let msg = `Time for Salat ${prayerTime} is in ${this.remindTimeRange.time} ${verbaliseTimeUnit(this.remindTimeRange.unit)}`;
+    alertUser(user, country, city, prayerTime, reminderDistance) {
+        let msg = `Time for Salat ${prayerTime} is in ${reminderDistance.time} ${verbaliseTimeUnit(reminderDistance.unit)}`;
         console.log(msg);
         user.send(msg);
     }

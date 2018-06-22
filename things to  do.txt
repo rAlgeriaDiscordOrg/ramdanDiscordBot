@@ -1,52 +1,40 @@
+not that important
+---------------
 show hijri date and time
-
-a function for time by city  (done)
-
-a function for time by long/lat  (done)
 
 a function to show all available calculation methods
 
 a function to show available cities   or a link to it
 
-
-
-
 get hijri date
 
 
+####################################""""
+UP TO here we have implemented the main prayerTime feature of the bot, it schedule well, get data from database (users and cities), also registration. and when time come it send a message to the registred users each in it's city and region prayers time.
+Note: reminder time before the prayer time is set to 10 min
+=====*********
 
-###################"""""
-function to register a user (not finished)
-==> add to city collection
-==> check if new city
-==> add to the scheduller if it's a new city
-##################"""""
+well to do but not urgent
+-----------------------------
+add saha shourek ftourek and ramdank  (inject that in schedules and if needed schedule for other times!!!!)
 
-################
-prayerTimeScheduller class
-==> init ..etc  (case crash to launch again)
-==> calculate all users time and schedul
-#############
-Notice: work with UTC time. (do convertion) 
+things to do to enchance what was done
+####################################################
+==>multiple reminders
+    ====> we are providing remindersDistants, at discordBot level for testing (same for all users), we will change that to by users (we have to make more enchancement to user registration process (so it include those info, and in  case not provided, we fallback to a default.))
 
-scheduller may need thoughts
-========================
-==============================
-we will have two scheduller, one for prayer time computation, the other for prayer time reminding
+      // [to see] NOte: when you get reminders from users, you can check if it's in or not (the best is to have a 3, or 4 or predefined, bot config, set of values, and users choose just one of them, then in all cities you schedule such a thing, and send to just the one that have that, the other choice, is to save such an info at registration time, and handle that too at remove time, so it's always effective)
 
-a devision of city by region (why: to have the prayerTimeComputation Scheduller  schedul different update time, for different region and that because, we are today here now, but it may be tomorrow there.  Check zones and time difference (i don't know if that necessary))
+==>handle else cases for time scheduling (when current time pass ...)
+
+####################################
 
 
-
-
-=========
-function to send message to users  (private)
-=========
 
 
 Later in configuration 
 ============================
-reminder timeout before prayer time
+reminder time  before prayer time
 
 
 
