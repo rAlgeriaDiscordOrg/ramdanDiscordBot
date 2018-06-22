@@ -1,4 +1,5 @@
 /node_modules
 /serviceAccountKey.json
+botConfig.json
 /botConfig.json
 /package-lock.json
