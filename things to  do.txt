@@ -25,8 +25,11 @@ things to do to enchance what was done
 
       // [to see] NOte: when you get reminders from users, you can check if it's in or not (the best is to have a 3, or 4 or predefined, bot config, set of values, and users choose just one of them, then in all cities you schedule such a thing, and send to just the one that have that, the other choice, is to save such an info at registration time, and handle that too at remove time, so it's always effective)
 
-==>handle else cases for time scheduling (when current time pass ...)
+==>handle else cases for time scheduling (when current time pass ...) (mostly done)
 
+==> handle connexion problem, auth to google api failure and all, try again multiple time!! (5 times may be!!)
+
+==> handle probable arising exceptions (specially the one using API ...)
 ####################################
 
 

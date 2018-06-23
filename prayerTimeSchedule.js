@@ -279,7 +279,7 @@ class PrayerTimeScheduler {
     }
 
     alertUser(user, country, city, prayerTime, reminderDistance) {
-        let msg = `Time for Salat ${prayerTime} is in ${reminderDistance.time} ${verbaliseTimeUnit(reminderDistance.unit)}`;
+        let msg = `Time for Salat ${prayerTime} is in ${reminderDistance.distance} ${verbaliseTimeUnit(reminderDistance.unit)}`;
         console.log(msg);
         user.send(msg);
     }
