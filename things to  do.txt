@@ -29,9 +29,11 @@ things to do to enchance what was done
 
 ==> handle connexion problem, auth to google api failure and all, try again multiple time!! (5 times may be!!)
 
-==> handle probable arising exceptions (specially the one using API ...)
-####################################
+==> handle probable arising exceptions (specially the one using API ...) and may do it like that, retry after 1 sec , then 2 sec, 4 sec , 8sec , 16 sec 16 sec 16sec then if not happening stop !!
 
+
+===> add alert at exact prayer time (make it optionally configurable)
+####################################
 
 
 
@@ -41,6 +43,10 @@ reminder time  before prayer time
 
 
 
+Analysis:
+###########
+==> first improtant thing, due to connexion problem, the bot can be logged off, then when it came he automatically log in!!! which will trigger ready ==> will launch the scheduling again!! 
+==> need to handle that (schedule just the first time !! and only that. or better, reset what was done, and start over brand new !!!!! think about it!!!) [problem he will send messages multiple times] 
 
 
 

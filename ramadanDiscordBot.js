@@ -21,22 +21,24 @@ let pt_fb = new PrayerTimeFireStore(db);
 
 //setting discord client for the bot
 const client = new Discord.Client();
-
+let prayerTimeScheduler = null;
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 
+    if(prayerTimeScheduler === null) {
+        prayerTimeScheduler = new PrayerTimeScheduler(null, db, client);
     
-    let prayerTimeScheduler = new PrayerTimeScheduler(null, db, client);
-    prayerTimeScheduler.getCitiesAndSchedule([
-        {
-            distance: 10,
-            unit: 'm'
-        },
-        {
-            distance: 5,
-            unit: 'm'
-        }
-    ]);
+        prayerTimeScheduler.getCitiesAndSchedule([
+            {
+                distance: 10,
+                unit: 'm'
+            },
+            {
+                distance: 5,
+                unit: 'm'
+            }
+        ]);
+    }
     // let dateFomrated = moment().format('YYYY-MM-DD');
     // let timeFormated = moment.tz(new Date(), 'Algeria/Algiers').add(10,'m').add(10, "s").format('hh:mm:ss');
     // prayerTimeScheduler.oneCitySchedule('Algeria', 'Blida', {
