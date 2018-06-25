@@ -195,7 +195,7 @@ class PrayerTimeScheduler {
                                         console.error(err);
                                     });
 
-                                    if (timeName === 'Isha') {
+                                    if (timeName === 'Isha' && i === 0) { // only within the first reminder (you can later when you add it's now the prayer time, you can do it at that time We will see)
                                         self.oneCityScheduleNextDay(country, city, dateFormated, timeZone, remindersDistances);
                                     }
                                     // remove the scheduler obj from the list
