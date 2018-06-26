@@ -6,8 +6,11 @@ a function to show all available calculation methods
 
 a function to show available cities   or a link to it
 
-get hijri date
 
+
+=====================
+get hijri date
+==================
 
 ####################################""""
 UP TO here we have implemented the main prayerTime feature of the bot, it schedule well, get data from database (users and cities), also registration. and when time come it send a message to the registred users each in it's city and region prayers time.
@@ -66,10 +69,6 @@ reminder time  before prayer time
 
 
 
-Analysis:
-###########
-==> first improtant thing, due to connexion problem, the bot can be logged off, then when it came he automatically log in!!! which will trigger ready ==> will launch the scheduling again!! 
-==> need to handle that (schedule just the first time !! and only that. or better, reset what was done, and start over brand new !!!!! think about it!!!) [problem he will send messages multiple times] 
 
 
 
