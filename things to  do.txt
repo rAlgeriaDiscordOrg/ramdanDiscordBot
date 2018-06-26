@@ -37,6 +37,29 @@ things to do to enchance what was done
 
 
 
+############################################################
+add another option for registration, where the user will not write the city, but get a menu like usd code!    user trigger the command, he get back, a menu of countries, he type back a number to choose, then get city menu and choose and so he get registred
+#########################################################
+
+
+#######################################################
+add too the possibility to unsubscribe !!!! 
+==> to disactivate, and activate (one flag in the db)  (may  use json, and a line by line parser or property by property parser! something like that)
+
+==> for unsubscribe => either delete completly the user, or save him to a special table of the one that have unsubscribed (statistics hhh), or do not remove him!
+
+#################################################
+
+
+IMPORTANT !!!!!!!!!!!!!!!!!!!!
+#####################################
+at registration process, launch a recheck and reschudeling for the resgistred city and only that registred city !!!!!!!!!
+
+
+####################################
+
+
+
 Later in configuration 
 ============================
 reminder time  before prayer time
