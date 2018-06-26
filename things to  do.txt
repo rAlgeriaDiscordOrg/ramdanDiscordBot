@@ -56,9 +56,9 @@ add too the possibility to unsubscribe !!!!
 
 IMPORTANT !!!!!!!!!!!!!!!!!!!!
 #####################################
-at registration process, launch a recheck and reschudeling for the resgistred city and only that registred city !!!!!!!!!
+at registration process, launch a recheck and reschudeling for the all brand new resgistred city and only that new registred city !!!!!!!!!
 
-
+check if the user is already registred, at user table it will automatically overide the old one (! do we need to set multiple countries registration, yea may be !! To be seen),   BUT what mater if not, is to remove the user from the old city, if he is the only user, remove the whole city !!!!!!!!!!
 ####################################
 
 
@@ -66,15 +66,6 @@ at registration process, launch a recheck and reschudeling for the resgistred ci
 Later in configuration 
 ============================
 reminder time  before prayer time
-
-
-
-
-
-
-
-
-
 
 
 
