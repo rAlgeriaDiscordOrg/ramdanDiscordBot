@@ -11,11 +11,11 @@ class PrayerTimeScheduler {
         this.pt_fs = new PrayerTimeFireStore(db);
         this.rotationSchedule = null; // the one that rotate every one day and recalculate all the times for the new day
         this.reminderSchedulers = [];
-        let ptwOpt = null;
+        this.ptwOpt = null;
         if (options && options.ptwOptions !== undefined) {
-            ptwOpt = options.ptwOptions;
+            this.ptwOpt = options.ptwOptions;
         }
-        this.ptw = new PrayerTimeWrapper(ptwOpt);
+        this.ptw = new PrayerTimeWrapper(this.ptwOpt);
 
         this.remindTimeRange = {
             time: 10,
@@ -60,6 +60,8 @@ class PrayerTimeScheduler {
     getCitiesAndSchedule(remindersDistances) {
         // get cities from database
         let self = this;
+        let ptw = new PrayerTimeWrapper(this.ptwOpt);
+
         console.log("getting cities");
         this.pt_fs.getAllCities().then(function (snapshot) {
             snapshot.forEach(doc => {
@@ -68,47 +70,16 @@ class PrayerTimeScheduler {
                 let city = data.city;
                 let country = data.country;
 
-                self.ptw.setOptions({
-                    city,
-                    country
-                });
+                self.oneCityScheduling(country, city, ptw, remindersDistances);
 
-                self.ptw.getTimingByCity().then(function (o) {
-                    let timeZone = o.body.data.meta.timezone;
-
-                    let day = numberToTwoDigit(o.body.data.date.gregorian.day.toString());
-
-                    let month = numberToTwoDigit(o.body.data.date.gregorian.month.number.toString());
-
-                    let year = o.body.data.date.gregorian.year.toString();
-
-                    let dateFormated = `${year}-${month}-${day}`;
-
-                    let timings = o.body.data.timings;
-
-
-                    // [to see] NOTE: we are providing remindersDistances, at discordBot level for testing (same for all users), we will change that to by users (we have to make more enchancement to user registration process (so it include those info, and in  case not provided, we fallback to a default.))
-                    let haveSchedule = self.oneCitySchedule(country, city, timings, dateFormated, timeZone, remindersDistances);
-
-                    // check if any schedule was set! if not do it with the next day 
-                    if (!haveSchedule) {
-                        console.log(" ======= current day is passed! Scheduling the next day !!!!!!!!!!!");
-
-                        self.oneCityScheduleNextDay(country, city, dateFormated, timeZone, remindersDistances);
-                    }
-
-                }).catch(function (err) {
-                    console.error('Error: !!!');
-                    console.error(err);
-                });
-
-                console.log(doc.id + ' => ' + doc.data());
+                console.log(doc.id + ' => ' + data);
                 console.dir(doc.data());
             });
         }).catch(function (err) {
             console.error(err);
         });
     }
+
 
     /**
      * 
@@ -143,14 +114,18 @@ class PrayerTimeScheduler {
                 // console.log('jobTime = ' + prayerTime_);
                 let prayerTime = moment.tz(prayerTime_, timeZone);
 
-
+                if(prayerTime.isDST()) {
+                    console.log("================== time is a DST ===================");
+                } else {
+                    console.log("================== time is ok no DST ==================");
+                }
 
                 // console.log('jobe time = ' + jobTime.format());
 
                 let currentTime = new Date();
 
                 if (prayerTime.toDate() - currentTime > 0) {
-                    console.log('yea we get a time');
+                    console.log(`${country}/${city}:\nyea we get a time`);
                     console.log(prayerTime.format());
                     if (!remindersDistances) {
                         remindersDistances = [{
@@ -196,7 +171,16 @@ class PrayerTimeScheduler {
                                     });
 
                                     if (timeName === 'Isha' && i === 0) { // only within the first reminder (you can later when you add it's now the prayer time, you can do it at that time We will see)
-                                        self.oneCityScheduleNextDay(country, city, dateFormated, timeZone, remindersDistances);
+                                        slef.pt_fs.doesCityExist(country, city).then((exists) => {
+                                            if(exists) {
+                                                console.log("city exist scheduling next day !!!!");
+                                                self.oneCityScheduleNextDay(country, city, dateFormated, timeZone, remindersDistances);
+                                            } else {
+                                                console.log('city no more exists, stoped no more scheduling !!!');
+                                            }
+                                        }).catch((err) => {
+                                            console.error(err);
+                                        });
                                     }
                                     // remove the scheduler obj from the list
                                     self.removeSchedule(schedulePos);
@@ -235,20 +219,66 @@ class PrayerTimeScheduler {
 
     oneCityScheduleNextDay(country, city, dateFormated, timeZone, remindersDistances) {
         let self = this;
+        let ptw = new PrayerTimeWrapper(this.ptwOpt);
         let nextDay = moment.tz(dateFormated, timeZone).add(1, 'day');
 
         let nextDayFormated = nextDay.format('YYYY-MM-DD');
         nextDay = moment.tz(nextDayFormated, timeZone);
-        self.ptw.setOptions({
+        ptw.setOptions({
+            country,
+            city,
             date_or_timestamp: nextDay.toDate()
         });
-        self.ptw.getTimingByCity().then(function (o) {
+        ptw.getTimingByCity().then(function (o) {
             let timings = o.body.data.timings;
 
             self.oneCitySchedule(country, city, timings, nextDayFormated, timeZone, remindersDistances);
         }).catch(function (err) {
             console.error(err);
         });
+    }
+
+    oneCityScheduling(country, city, ptw, remindersDistances) {
+        let self = this;
+ 
+        ptw.setOptions({
+            city,
+            country
+        });
+
+        ptw.getTimingByCity().then(function (o) {
+            let timeZone = o.body.data.meta.timezone;
+            console.log("time zone ===========================  " + timeZone);
+            let day = numberToTwoDigit(o.body.data.date.gregorian.day.toString());
+
+            let month = numberToTwoDigit(o.body.data.date.gregorian.month.number.toString());
+
+            let year = o.body.data.date.gregorian.year.toString();
+
+            let dateFormated = `${year}-${month}-${day}`;
+
+            let timings = o.body.data.timings;
+
+
+            // [to see] NOTE: we are providing remindersDistances, at discordBot level for testing (same for all users), we will change that to by users (we have to make more enchancement to user registration process (so it include those info, and in  case not provided, we fallback to a default.))
+            let haveSchedule = self.oneCitySchedule(country, city, timings, dateFormated, timeZone, remindersDistances);
+
+            // check if any schedule was set! if not do it with the next day 
+            if (!haveSchedule) {
+                console.log(" ======= current day is passed! Scheduling the next day !!!!!!!!!!!");
+
+                self.oneCityScheduleNextDay(country, city, dateFormated, timeZone, remindersDistances);
+            }
+        }).catch(function (err) {
+            console.error('Error: !!!');
+            console.error(err);
+        });
+    }
+
+    newCityScheduling (country, city, remindersDistances) {
+        let ptw = new PrayerTimeWrapper(this.ptwOpt);
+
+        this.oneCityScheduling(country, city, ptw);
     }
 
     removeSchedule(pos) {

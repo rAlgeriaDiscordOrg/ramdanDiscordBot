@@ -1,3 +1,13 @@
+/**
+ * registration updated (only one city at once, registring again, will remove you from the old city)
+ * 
+ * 
+ * Observations:
+ * NOTE:
+ * possible issues:
+ * => if someone register and register again before the first one completly end! You may handle that. a global object, that lock registration for a person (by id) ==> to be done!!
+ */
+
 const Discord = require('discord.js');
 var admin = require('firebase-admin');
 const PrayerTimeFireStore = require('./prayerTimeFireStore');
@@ -18,26 +28,25 @@ const db = admin.firestore();
 let pt_fb = new PrayerTimeFireStore(db);
 
 
-
+let remindersDistances = [{
+    distance: 10,
+    unit: 'm'
+},
+{
+    distance: 5,
+    unit: 'm'
+}
+];
 //setting discord client for the bot
 const client = new Discord.Client();
 let prayerTimeScheduler = null;
 client.on('ready', () => {
     console.log(`Logged in as ${client.user.tag}!`);
 
-    if(prayerTimeScheduler === null) {
+    if (prayerTimeScheduler === null) {
         prayerTimeScheduler = new PrayerTimeScheduler(null, db, client);
-    
-        prayerTimeScheduler.getCitiesAndSchedule([
-            {
-                distance: 10,
-                unit: 'm'
-            },
-            {
-                distance: 5,
-                unit: 'm'
-            }
-        ]);
+
+        prayerTimeScheduler.getCitiesAndSchedule(remindersDistances);
     }
     // let dateFomrated = moment().format('YYYY-MM-DD');
     // let timeFormated = moment.tz(new Date(), 'Algeria/Algiers').add(10,'m').add(10, "s").format('hh:mm:ss');
@@ -49,13 +58,14 @@ client.on('ready', () => {
 
 client.on('message', msg => {
     if (msg.content.substr(0, config.prefix.length) === config.prefix) {
-        let args = msg.content.slice(config.prefix.length).trim().split(/ +/g);
+        let args = parseArgsWithQuot(msg.content.slice(config.prefix.length).trim());
         let command = args.shift().toLowerCase();
 
         switch (command) {
             case 'prayer':
-                switch (args[0]) {
+                switch (args[0].toLowerCase()) {
                     case 'register':
+
                         [country, city] = args.slice(1);
 
                         // work with them and check if were provided (undefined)
@@ -73,13 +83,14 @@ client.on('message', msg => {
                             return;
                         }
 
-                        country = capitalizeFirstLetter(country);
-                        city = capitalizeFirstLetter(city);
+                        country = capitalizeFirstLetter(country).trim();
+                        city = capitalizeFirstLetter(city).trim();
 
                         // registring the user
                         console.log("registring user  = '" + msg.author.id);
                         msg.channel.send(`Hang on! registration launched and caried by the best samurai's`);
-                        pt_fb.registerUserToDB(msg, country, city).then(function (v) {
+                        pt_fb.registerUserToDB(msg, country, city)
+                        .then(function (v) {
                             //in registration success
 
                             let sendMsg =
@@ -90,6 +101,20 @@ client.on('message', msg => {
                         `
                             msg.channel.send(sendMsg);
                             console.log(sendMsg);
+
+                            // after registering a new user we need to check if it's city is a new city or already existing one, in the first case we will launch a schedule for the new city.
+
+                            // console.log("v.city");
+                            // console.dir(v.city);
+
+                            // console.log("v : ");
+                            // console.dir(v);
+
+                            let cityExists = v.city.cityExists;
+                            if(prayerTimeScheduler && !cityExists) {
+                                prayerTimeScheduler.newCityScheduling(country, city, remindersDistances);
+                            }
+
                         }).catch(function (err) {
                             // in registration failure
                             console.error("Error adding document: ", err);
@@ -123,9 +148,59 @@ function capitalizeFirstLetter(string) {
     return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
 
+/**
+ * note well normally i should have used yargs library or something similair to win time, and have a better args parsing, easy, more features riche. and out of the box. 
+ * 
+ * but for fun! and just like that, i build up a quick parsing function (that take in the double quote arguments)
+ */
 
+let spaceLetters = [' ', '\t'];
 
+function isAWhiteSpace(letter) {
+    for(let i = 0; i < spaceLetters.length; i++){
+        if(spaceLetters[i] === letter) {
+            return true
+        }
+    }
+    return false;
+}
 
+function parseArgsWithQuot(commandMsg) {
+    commandMsg = commandMsg.trim();
+    let args = [];
+    let quoteArg = false;
+    let start = false;
+    debugger;
+    for (let i = 0; i < commandMsg.length; i++) {
+        let l = args.length - 1;
+        debugger;
+        if (!start && (commandMsg[i] === '"')) {
+            quoteArg = true;
+            start = true;
+            args.push('');
+            debugger;
+        } else if (!start && commandMsg[i] !== '"' && !isAWhiteSpace(commandMsg[i])) {
+            quoteArg = false;
+            start = true;
+            args.push('');
+            args[l + 1] += commandMsg[i];
+            debugger;
+        } else if (start && quoteArg && commandMsg[i] !== '"') {
+            args[l] += commandMsg[i];
+            debugger;
+        } else if (start && !quoteArg && !isAWhiteSpace(commandMsg[i])) {
+            args[l] += commandMsg[i];
+            debugger;
+        } else if (start && quoteArg && commandMsg[i] === '"') { // here finishing and getting the args
+            start = false;
+            debugger;
+        } else if(start && !quoteArg && (isAWhiteSpace(commandMsg[i]) || i === commandMsg.length - 1)) {
+            start = false;
+            debugger;
+        }
+    }
+    return args;
+}
 
 
 

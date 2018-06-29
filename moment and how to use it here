@@ -1,0 +1,13 @@
+what is the z
+
+how to get time in a timezone and have in the local time  
+===W> let d = moment.tz('2018-06-19T15:00:00','Asia/Dubai');
+
+how to use moment
+==> let d = moment.tz('2018-06-19T15:00:00','Asia/Dubai');
+=get date obj=> let dd = d.toDate();
+
+how to do :
+read time first time at any moment, go through all cities, schedule, all the prayer times, that aren't passed! and for the Aicha you schedule the next day (how you have saved the day you were in, you add 1 day and you require with it)
+
+if all overdue get the time for the next day

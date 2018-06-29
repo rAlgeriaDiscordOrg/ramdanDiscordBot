@@ -60,6 +60,12 @@ at registration process, launch a recheck and reschudeling for the all brand new
 
 check if the user is already registred, at user table it will automatically overide the old one (! do we need to set multiple countries registration, yea may be !! To be seen),   BUT what mater if not, is to remove the user from the old city, if he is the only user, remove the whole city !!!!!!!!!!
 ####################################
+#########################################################
+possible issues:
+ * => if someone register and register again before the first one completly end! You may handle that. a global object, that lock registration for a person (by id) ==> to be done!!
+#############################################################
+
+
 
 
 
@@ -70,6 +76,16 @@ reminder time  before prayer time
 
 
 
+
+
+
+
+
+
+
+NOTES:
+================
+city handling (if there is no users, why then handle it !!!)
 
 
 
