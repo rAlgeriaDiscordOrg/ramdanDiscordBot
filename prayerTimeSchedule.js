@@ -171,7 +171,7 @@ class PrayerTimeScheduler {
                                     });
 
                                     if (timeName === 'Isha' && i === 0) { // only within the first reminder (you can later when you add it's now the prayer time, you can do it at that time We will see)
-                                        slef.pt_fs.doesCityExist(country, city).then((exists) => {
+                                        self.pt_fs.doesCityExist(country, city).then((exists) => {
                                             if(exists) {
                                                 console.log("city exist scheduling next day !!!!");
                                                 self.oneCityScheduleNextDay(country, city, dateFormated, timeZone, remindersDistances);
