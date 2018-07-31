@@ -33,7 +33,7 @@ let PrayerTimeFireStore = function (fireStoreDB) {
                                     doc.ref.delete();
                                     console.log("old snapshot size = " + snapshot.size);
                                     cityDocRef.collection('users').get().then((querySnapshot) => {
-                                        if(!querySnapshot.exists) {
+                                        if (!querySnapshot.exists) {
                                             cityDocRef.delete();
                                             console.log("city have no users , it's deleted!");
                                         }
@@ -129,14 +129,76 @@ let PrayerTimeFireStore = function (fireStoreDB) {
     this.doesCityExist = function (country, city) {
         return new Promise(function (resolve, reject) {
             db.collection('cities').doc(`${country}_${city}`).get()
-            .then((snapshot) => {
-                if(snapshot.exists) {
-                    resolve(true);
+                .then((snapshot) => {
+                    if (snapshot.exists) {
+                        resolve(true);
+                    } else {
+                        resolve(false);
+                    }
+                })
+                .catch((err) => {
+                    reject(err);
+                });
+        });
+    }
+
+    this.unsubscribUser = function (msg) {
+        return new Promise(function (resolve, reject) {
+            let userDocRef = db.collection('users').doc(msg.author.id);
+
+            userDocRef.get().then(doc => {
+                if (doc.exists) {
+                    let d = doc.data();
+
+                    let cityId = `${d.country}_${d.city}`;
+
+                    db.collection('cities').doc(cityId).collection('users').doc(msg.author.id).delete()
+                    .then(function () {
+                        resolve({
+                            userDocRef,
+                            msg
+                        });
+                    })
+                    .catch(function () {
+                        console.error(err);
+                        reject(err);
+                    });
+
                 } else {
-                    resolve(false);
+                    resolve({
+                        userDocRef,
+                        msg
+                    });
                 }
             })
-            .catch((err) => {
+            .catch(function (err) {
+                console.error(err);
+                reject(err);
+            });
+        });
+    }
+
+    this.resubscrib = function (msg) {
+        return new Promise(function (resolve, reject) {
+            db.collection('users').doc(msg.author.id).get().then(doc => {
+                if (doc.exists) {
+                    let d = doc.data();
+                    db.collection('cities').doc(`${d.country}_${d.city}`).collection('users').doc(msg.author.id).set({
+                        id: d.id,
+                        username: d.username
+                    })
+                    .then(function () {
+                        resolve();
+                    })
+                    .catch(function (err) {
+                        reject(err);
+                    })
+                    ;
+                } else {
+                    reject();
+                }
+            })
+            .catch(function (err) {
                 reject(err);
             });
         });

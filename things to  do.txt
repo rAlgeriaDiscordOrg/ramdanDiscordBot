@@ -66,7 +66,18 @@ possible issues:
 #############################################################
 
 
+###############################
+oh you came to give a good idea hhh (it's simple and stupide hhhh)  all arguments after the country one, will compose the city arguments
+################""""
 
+
+##############
+city key ==> '  => '_'
+##########
+
+#############
+alertCityUsers ()  ==> exact memaining time, or optional and use that in the case prayer not passed but passed reminding time,  and that there  where we started scheduling
+############""
 
 
 Later in configuration 
@@ -93,3 +104,7 @@ city handling (if there is no users, why then handle it !!!)
 No more necessary
 
 our function whith it's counter, that go and loop through the queue, with settimout, and it exec  the callback that handle user showing message
+
+
+
+228206700186828804

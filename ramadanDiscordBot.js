@@ -119,7 +119,7 @@ client.on('message', msg => {
                             // in registration failure
                             console.error("Error adding document: ", err);
 
-                            msg.channel.send('OPSS! Registration failed when writing to database, please try again!')
+                            msg.channel.send('OPSS! Registration failed when trying to connect to database, please try again!')
                         });
                         // pt_fb.createCityAndAddUser(country, city, msg.author.id).then(function (v) {
                         //     console.log("result");
@@ -129,6 +129,24 @@ client.on('message', msg => {
                         //     console.error(err);
                         // });
                     case 'unsubscrib':
+                        pt_fb.unsubscribUser(msg)
+                        .then(function () {
+                            msg.channel.send(`${msg.author.username} unsubscrib was succesfull !  
+                            \n
+                            (know that you can resubscrib, to your last registration city, with \`\`\`!prayer resubscrib\`\`\`)`);
+                        })
+                        .catch(function () {
+                            msg.channel.send(`Unsubscrib failed!!!  try again!`);
+                        });
+                        break;
+                    case 'resubscrib':
+                        pt_fb.resubscrib(msg)
+                        .then(function () {
+                            msg.channel.send(`${msg.author.username} resubscribtion was successful!\nFrom now on, you will get your beloved reminders!`);
+                        })
+                        .catch(function () {
+                            msg.channel.send('resubscribtion failed! try again!');
+                        });
 
                         break;
                     default:
