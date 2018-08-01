@@ -15,10 +15,22 @@ const PrayerTimeScheduler = require('./prayerTimeSchedule');
 const moment = require('moment-timezone');
 const fs = require('fs');
 
-let config = require('./botConfig.json');
+let config;
+if(process.env.BOT_CONFIG) {
+    console.log("get it from Env var !!!!!!!!!!");
+    config = JSON.parse(process.env.BOT_CONFIG);
+} else {
+    console.log("get from file !!!!!!!");
+    config = require('./botConfig.json');
+}
 
 // setting firestore
-var firebaseServiceAccount = require('./serviceAccountKey.json');
+var firebaseServiceAccount;
+if(process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
+    firebaseServiceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+} else {
+    firebaseServiceAccount = require('./serviceAccountKey.json');
+}
 
 admin.initializeApp({
     credential: admin.credential.cert(firebaseServiceAccount),
