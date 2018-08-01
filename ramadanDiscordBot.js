@@ -27,9 +27,13 @@ if(process.env.BOT_CONFIG) {
 // setting firestore
 var firebaseServiceAccount;
 if(process.env.FIREBASE_SERVICE_ACCOUNT_KEY) {
-    firebaseServiceAccount = process.env.FIREBASE_SERVICE_ACCOUNT_KEY;
+    firebaseServiceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY);
+
+    console.log("firebase service account got from config var  !!!!!!!");
 } else {
     firebaseServiceAccount = require('./serviceAccountKey.json');
+
+    console.log("firebase service account got from file !!!!!");
 }
 
 admin.initializeApp({
